@@ -133,7 +133,13 @@ def add_morph_transition(slide):
     P14_NS = "http://schemas.microsoft.com/office/powerpoint/2010/main"
     MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-    alt = etree.SubElement(sld, f"{{{MC_NS}}}AlternateContent")
+    # Declare mc & p14 on the AlternateContent element itself so the
+    # Requires="p14" prefix reference is in scope when PowerPoint parses it.
+    alt = etree.SubElement(
+        sld,
+        f"{{{MC_NS}}}AlternateContent",
+        nsmap={"mc": MC_NS, "p14": P14_NS},
+    )
     choice = etree.SubElement(alt, f"{{{MC_NS}}}Choice")
     choice.set("Requires", "p14")
     transition = etree.SubElement(choice, f"{{{P_NS}}}transition")
@@ -145,11 +151,6 @@ def add_morph_transition(slide):
     fb_trans = etree.SubElement(fallback, f"{{{P_NS}}}transition")
     fb_trans.set("spd", "med")
     etree.SubElement(fb_trans, f"{{{P_NS}}}fade")
-
-    if "p14" not in (sld.nsmap or {}):
-        sld.set("{http://www.w3.org/2000/xmlns/}p14", P14_NS)
-    if "mc" not in (sld.nsmap or {}):
-        sld.set("{http://www.w3.org/2000/xmlns/}mc", MC_NS)
 
 
 def add_fade_transition(slide):
@@ -371,22 +372,11 @@ def slide_05_pyramid(prs):
     plot = chart.plots[0]
     plot.gap_width = 80
     series = chart.series[0]
-    # Color points via XML
-    solid_fills = [
-        "F1C40F",  # gold
-        "E67E22",  # orange
-        "E74C3C",  # red
-    ]
-    from pptx.oxml.ns import qn as _qn
-    ser = series._element
-    for idx, hexcol in enumerate(solid_fills):
-        pt = etree.SubElement(ser, _qn("c:dPt"))
-        idx_el = etree.SubElement(pt, _qn("c:idx"))
-        idx_el.set("val", str(idx))
-        spPr = etree.SubElement(pt, _qn("c:spPr"))
-        solid = etree.SubElement(spPr, _qn("a:solidFill"))
-        srgb = etree.SubElement(solid, _qn("a:srgbClr"))
-        srgb.set("val", hexcol)
+    point_colors = [RGBColor(0xF1, 0xC4, 0x0F), ORANGE, RED]
+    for idx, col in enumerate(point_colors):
+        point = series.points[idx]
+        point.format.fill.solid()
+        point.format.fill.fore_color.rgb = col
 
     try:
         chart.has_title = False
@@ -892,16 +882,10 @@ def slide_16_spi_chart(prs):
     chart.legend.include_in_layout = False
 
     # Color series
-    fills = ["5A6B7D", "1AB3A6"]
-    for s_idx, hexcol in enumerate(fills):
-        ser = chart.series[s_idx]._element
-        spPr = ser.find(qn("c:spPr"))
-        if spPr is not None:
-            ser.remove(spPr)
-        spPr = etree.SubElement(ser, qn("c:spPr"))
-        solid = etree.SubElement(spPr, qn("a:solidFill"))
-        srgb = etree.SubElement(solid, qn("a:srgbClr"))
-        srgb.set("val", hexcol)
+    for s_idx, col in enumerate([SLATE, TEAL]):
+        ser = chart.series[s_idx]
+        ser.format.fill.solid()
+        ser.format.fill.fore_color.rgb = col
 
     # Insight cards
     insights = [
@@ -1078,16 +1062,10 @@ def slide_20_training_chart(prs):
     chart.has_legend = True
     chart.legend.position = XL_LEGEND_POSITION.BOTTOM
 
-    fills = ["E8B923", "0B1F3A"]
-    for s_idx, hexcol in enumerate(fills):
-        ser = chart.series[s_idx]._element
-        spPr = ser.find(qn("c:spPr"))
-        if spPr is not None:
-            ser.remove(spPr)
-        spPr = etree.SubElement(ser, qn("c:spPr"))
-        solid = etree.SubElement(spPr, qn("a:solidFill"))
-        srgb = etree.SubElement(solid, qn("a:srgbClr"))
-        srgb.set("val", hexcol)
+    for s_idx, col in enumerate([GOLD, NAVY]):
+        ser = chart.series[s_idx]
+        ser.format.fill.solid()
+        ser.format.fill.fore_color.rgb = col
 
     # Callout
     call = round_rect(slide, Inches(9.5), Inches(2.5), Inches(3.3), Inches(3.2), NAVY)
