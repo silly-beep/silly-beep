@@ -164,6 +164,117 @@ def add_fade_transition(slide):
     etree.SubElement(transition, f"{{{P_NS}}}fade")
 
 
+def add_entrance_animations(slide, skip=1, stagger_ms=150, dur_ms=500):
+    """Auto-playing staggered fade entrance for every shape on the slide.
+
+    Builds the p:timing tree the same way PowerPoint does for a
+    'Fade / Start: With Previous' effect on each shape, so the whole
+    slide assembles itself when it appears.
+    """
+    P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
+
+    shapes = list(slide.shapes)[skip:]
+    if not shapes:
+        return
+
+    # Keep the full build under ~4 seconds on shape-heavy slides.
+    total_budget = 4000
+    stagger = min(stagger_ms, max(40, total_budget // max(1, len(shapes))))
+
+    sld = slide._element
+    for child in list(sld):
+        if child.tag == f"{{{P_NS}}}timing":
+            sld.remove(child)
+
+    def el(parent, tag, **attrs):
+        e = etree.SubElement(parent, f"{{{P_NS}}}{tag}")
+        for k, v in attrs.items():
+            e.set(k, str(v))
+        return e
+
+    next_id = [1]
+
+    def nid():
+        i = next_id[0]
+        next_id[0] += 1
+        return i
+
+    timing = el(sld, "timing")
+    tnLst = el(timing, "tnLst")
+    root_par = el(tnLst, "par")
+    root_ctn = el(root_par, "cTn", id=nid(), dur="indefinite", restart="never", nodeType="tmRoot")
+    root_children = el(root_ctn, "childTnLst")
+
+    seq = el(root_children, "seq", concurrent="1", nextAc="seek")
+    main_ctn = el(seq, "cTn", id=nid(), dur="indefinite", nodeType="mainSeq")
+    main_seq_id = main_ctn.get("id")
+    main_children = el(main_ctn, "childTnLst")
+
+    # Single group that fires automatically when the slide appears.
+    grp_par = el(main_children, "par")
+    grp_ctn = el(grp_par, "cTn", id=nid(), fill="hold")
+    grp_st = el(grp_ctn, "stCondLst")
+    el(grp_st, "cond", delay="indefinite")
+    on_begin = el(grp_st, "cond", evt="onBegin", delay="0")
+    tn_ref = el(on_begin, "tn")
+    tn_ref.set("val", main_seq_id)
+    grp_children = el(grp_ctn, "childTnLst")
+
+    inner_par = el(grp_children, "par")
+    inner_ctn = el(inner_par, "cTn", id=nid(), fill="hold")
+    inner_st = el(inner_ctn, "stCondLst")
+    el(inner_st, "cond", delay="0")
+    inner_children = el(inner_ctn, "childTnLst")
+
+    for i, shape in enumerate(shapes):
+        spid = shape.shape_id
+        delay = i * stagger
+
+        eff_par = el(inner_children, "par")
+        eff_ctn = el(
+            eff_par, "cTn", id=nid(), presetID="10", presetClass="entr",
+            presetSubtype="0", fill="hold", grpId="0", nodeType="withEffect",
+        )
+        eff_st = el(eff_ctn, "stCondLst")
+        el(eff_st, "cond", delay=delay)
+        eff_children = el(eff_ctn, "childTnLst")
+
+        # visibility set
+        set_el = el(eff_children, "set")
+        set_bhvr = el(set_el, "cBhvr")
+        set_ctn = el(set_bhvr, "cTn", id=nid(), dur="1", fill="hold")
+        set_st = el(set_ctn, "stCondLst")
+        el(set_st, "cond", delay="0")
+        set_tgt = el(set_bhvr, "tgtEl")
+        sp_tgt = el(set_tgt, "spTgt")
+        sp_tgt.set("spid", str(spid))
+        attr_lst = el(set_bhvr, "attrNameLst")
+        attr = el(attr_lst, "attrName")
+        attr.text = "style.visibility"
+        to = el(set_el, "to")
+        str_val = el(to, "strVal")
+        str_val.set("val", "visible")
+
+        # fade in
+        anim = el(eff_children, "animEffect")
+        anim.set("transition", "in")
+        anim.set("filter", "fade")
+        anim_bhvr = el(anim, "cBhvr")
+        el(anim_bhvr, "cTn", id=nid(), dur=dur_ms)
+        anim_tgt = el(anim_bhvr, "tgtEl")
+        sp_tgt2 = el(anim_tgt, "spTgt")
+        sp_tgt2.set("spid", str(spid))
+
+    prev_cond_lst = el(seq, "prevCondLst")
+    prev_cond = el(prev_cond_lst, "cond", evt="onPrev", delay="0")
+    prev_tgt = el(prev_cond, "tgtEl")
+    el(prev_tgt, "sldTgt")
+    next_cond_lst = el(seq, "nextCondLst")
+    next_cond = el(next_cond_lst, "cond", evt="onNext", delay="0")
+    next_tgt = el(next_cond, "tgtEl")
+    el(next_tgt, "sldTgt")
+
+
 def accent_bar(slide, color=GOLD):
     return rect(slide, Inches(0), Inches(0), Inches(0.12), SLIDE_H, color)
 
@@ -268,11 +379,11 @@ def slide_03_policy(prs):
     slide_title(slide, "Safety Policy")
 
     points = [
-        ("◆", "Define Values", "Brainstorm and document your organization's core values"),
-        ("◆", "Anchor Safety", "Opening paragraph reflects where safety fits in those values"),
-        ("◆", "Set the Dream", "What should the SMS deliver for the organization?"),
-        ("◆", "Write Objectives", "Turn that vision into clear SMS policy objectives"),
-        ("◆", "Assign Ownership", "Outline high-level responsibilities for every employee"),
+        ("◆", "Define Values", "Brainstorm your organization's values and write them down."),
+        ("◆", "Anchor Safety", "The opening paragraph of your safety policy should reflect where safety fits into your values."),
+        ("◆", "Dream", "What would you like the SMS to do for your organization?"),
+        ("◆", "Set Objectives", "Set those as the SMS objectives in your policy."),
+        ("◆", "Assign Ownership", "Outline high level responsibilities for all employees of your organization."),
     ]
     for i, (icon, title, desc) in enumerate(points):
         y = Inches(1.7 + i * 1.0)
@@ -386,7 +497,7 @@ def slide_05_pyramid(prs):
     footer = slide.shapes.add_textbox(Inches(0.5), Inches(6.7), Inches(12), Inches(0.45))
     add_text(
         footer,
-        "Be vigilant — FIND the next POTENTIAL accident and prevent it from HAPPENING",
+        "We must be vigilant to FIND the next POTENTIAL accident and prevent it from HAPPENING",
         size=14, color=GOLD_SOFT, bold=True, align=PP_ALIGN.CENTER,
     )
     set_shape_name(footer, "pyrFooter")
@@ -400,13 +511,13 @@ def slide_06_commitment(prs):
     rect(slide, 0, 0, SLIDE_W, SLIDE_H, OFF_WHITE)
     accent_bar(slide)
     section_label(slide, "Accountability")
-    slide_title(slide, "Management Commitment")
+    slide_title(slide, "Management Commitment & Safety Accountabilities")
 
     cards = [
-        (NAVY, "01", "SMS Champion", "One person oversees SMS development, implementation & operation"),
-        (TEAL, "02", "Not Sole Owner", "The champion does not bear principal responsibility for safety"),
-        (BLUE, "03", "Line Managers", "Middle to front-line managers own the operations where risk lives"),
-        (ORANGE, "04", "SMS Owners", "Managers & supervisors are the true owners of the SMS"),
+        (NAVY, "01", "One Responsible Person", "One person must have the responsibility to oversee SMS development, implementation and operation."),
+        (TEAL, "02", "The \u201cChampion\u201d", "This person must be the champion for the SMS program — but does not bear the principal responsibility for safety management."),
+        (BLUE, "03", "Line Managers", "Managers of the \u201cline\u201d operational functions, from middle management to front-line supervisors, manage the operations in which risk is incurred."),
+        (ORANGE, "04", "Owners of the SMS", "These managers and supervisors are the \u201cowners\u201d of the SMS."),
     ]
     for i, (col, num, title, desc) in enumerate(cards):
         x = Inches(0.6 + (i % 2) * 6.3)
@@ -434,8 +545,12 @@ def slide_07_swiss_cheese(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     rect(slide, 0, 0, SLIDE_W, SLIDE_H, OFF_WHITE)
     accent_bar(slide)
-    section_label(slide, "Defense in Depth")
-    slide_title(slide, "Barriers & Controls")
+    section_label(slide, "Management & Supervision")
+    slide_title(slide, "Barriers or Controls")
+
+    work = slide.shapes.add_textbox(Inches(9.0), Inches(2.2), Inches(3.5), Inches(0.5))
+    add_text(work, "WORK", size=20, color=GREEN, bold=True, align=PP_ALIGN.CENTER)
+    set_shape_name(work, "workLabel")
 
     # Hazard
     haz = round_rect(slide, Inches(0.5), Inches(3.2), Inches(1.8), Inches(1.0), GOLD)
@@ -499,7 +614,7 @@ def slide_08_key_personnel(prs):
     set_shape_name(top, "topMgmt")
     tt = slide.shapes.add_textbox(Inches(0.9), Inches(1.75), Inches(11.5), Inches(0.8))
     tf = add_text(tt, "TOP MANAGEMENT", size=16, color=GOLD, bold=True)
-    add_para(tf, "Ultimate SMS responsibility  ·  Provides essential resources", size=13, color=WHITE, space_before=4)
+    add_para(tf, "Has the ultimate responsibility for the SMS, provides the resources essential to implement and maintain it, and appoints a member of management — the Safety Manager.", size=12, color=WHITE, space_before=4)
     set_shape_name(tt, "topMgmtText")
 
     # Safety manager card
@@ -510,14 +625,14 @@ def slide_08_key_personnel(prs):
     add_text(smt, "Safety Manager", size=18, color=NAVY, bold=True)
     set_shape_name(smt, "smTitle")
     duties = [
-        "Establish & maintain SMS processes",
-        "Report performance to leadership",
-        "Promote safety awareness",
-        "Define & communicate authorities",
+        "Ensuring the processes needed for the SMS are established, implemented and maintained",
+        "Reporting to top management on the performance of the SMS and the need for improvement",
+        "Ensuring the promotion of awareness of safety requirements throughout the organization",
+        "Ensuring safety-related positions, responsibilities and authorities are defined, documented and communicated",
     ]
     for i, d in enumerate(duties):
-        db = slide.shapes.add_textbox(Inches(0.9), Inches(4.0 + i * 0.55), Inches(3.5), Inches(0.5))
-        add_text(db, f"→  {d}", size=12, color=SLATE)
+        db = slide.shapes.add_textbox(Inches(0.9), Inches(3.85 + i * 0.75), Inches(3.5), Inches(0.72))
+        add_text(db, f"→  {d}", size=10.5, color=SLATE)
         set_shape_name(db, f"smDuty{i}")
 
     # Icon metric cards
@@ -553,15 +668,15 @@ def slide_09_erp(prs):
     # Definition
     defn = round_rect(slide, Inches(0.6), Inches(1.6), Inches(12.1), Inches(1.2), NAVY)
     set_shape_name(defn, "erpDef")
-    dt = slide.shapes.add_textbox(Inches(0.9), Inches(1.85), Inches(11.5), Inches(0.8))
-    add_text(dt, "A written outline of actions during & after an emergency — who does what, when.", size=16, color=WHITE, align=PP_ALIGN.CENTER)
+    dt = slide.shapes.add_textbox(Inches(0.9), Inches(1.8), Inches(11.5), Inches(0.9))
+    add_text(dt, "An ERP outlines in writing what is done when an emergency occurs, what to do after an accident happens — and who is responsible for each action.", size=15, color=WHITE, align=PP_ALIGN.CENTER)
     set_shape_name(dt, "erpDefText")
 
     # Before / During / After
     phases = [
-        (TEAL, "BEFORE", "Prepare", "Train · Drill · Stage resources"),
-        (GOLD, "DURING", "Respond", "Clear roles · Rapid action"),
-        (ORANGE, "AFTER", "Recover", "Care · Secure · Learn"),
+        (TEAL, "PREPARE", "Be Ready", "The better prepared, the better the chances of minimizing injury & damage"),
+        (GOLD, "RESPOND", "Act Fast", "Clear roles — who is responsible for each action"),
+        (ORANGE, "ACCESS", "Keep It Close", "Readily available at the work stations of first responders"),
     ]
     for i, (col, phase, title, desc) in enumerate(phases):
         x = Inches(0.6 + i * 4.2)
@@ -582,7 +697,7 @@ def slide_09_erp(prs):
     # Impact bar chart concept
     footer = slide.shapes.add_textbox(Inches(0.6), Inches(6.0), Inches(12.1), Inches(0.9))
     tf = add_text(footer, "GOAL", size=12, color=GOLD, bold=True)
-    add_para(tf, "Better preparation → fewer injuries · less damage to people, equipment & environment", size=14, color=NAVY, space_before=4)
+    add_para(tf, "Minimize injuries to personnel and damage to equipment, property or the environment.", size=14, color=NAVY, space_before=4)
     set_shape_name(footer, "erpFooter")
 
     add_morph_transition(slide)
@@ -597,7 +712,7 @@ def slide_10_documentation(prs):
     slide_title(slide, "SMS Documentation")
 
     sub = slide.shapes.add_textbox(Inches(0.7), Inches(1.45), Inches(11), Inches(0.4))
-    add_text(sub, "Policies, objectives & procedures — paper or electronic — clearly defined.", size=14, color=SLATE)
+    add_text(sub, "Clearly defined and documented safety policies, objectives and procedures — in paper or electronic format.", size=14, color=SLATE)
     set_shape_name(sub, "docSub")
 
     standards = [
@@ -624,7 +739,7 @@ def slide_10_documentation(prs):
         set_shape_name(db, f"docDesc{i}")
 
     foot = slide.shapes.add_textbox(Inches(0.7), Inches(6.2), Inches(12), Inches(0.5))
-    add_text(foot, "Retention period is defined by the organization — and enforced.", size=13, color=SLATE, align=PP_ALIGN.CENTER)
+    add_text(foot, "The organization should determine how long records should be retained.", size=13, color=SLATE, align=PP_ALIGN.CENTER)
     set_shape_name(foot, "docFoot")
 
     add_morph_transition(slide)
@@ -639,9 +754,9 @@ def slide_11_risk_strategies(prs):
     slide_title(slide, "Safety Risk Management")
 
     strategies = [
-        (ORANGE, "REACTIVE", "Past", "Responds to events that have already happened"),
-        (GOLD, "PROACTIVE", "Present", "Seeks hazards through analysis of processes"),
-        (TEAL, "PREDICTIVE", "Future", "Analyzes systems to spot potential problems"),
+        (ORANGE, "REACTIVE", "(Past)", "Responds to events that have already happened."),
+        (GOLD, "PROACTIVE", "(Present)", "Actively seeks the identification of hazardous conditions through the analysis of the organization's processes."),
+        (TEAL, "PREDICTIVE", "(Future)", "Analyzes system processes and environment to identify potential future problems."),
     ]
     for i, (col, name, time, desc) in enumerate(strategies):
         x = Inches(0.6 + i * 4.2)
@@ -683,10 +798,10 @@ def slide_12_hazard_reporting(prs):
     add_text(lt, "HAZARD IDENTIFICATION", size=16, color=NAVY, bold=True)
     set_shape_name(lt, "hazTitle")
     points = [
-        "Proactively find existing & potential hazards",
-        "Cover organizational change risks",
-        "New services · equipment · personnel",
-        "Rapid growth periods need extra focus",
+        "The SMS identifies hazards and develops processes to identify and manage risks",
+        "Proactive identification of existing and potential hazards",
+        "Includes hazards from organizational change — rapid growth",
+        "New services, new equipment or new personnel",
     ]
     for i, p in enumerate(points):
         pb = slide.shapes.add_textbox(Inches(0.9), Inches(2.8 + i * 0.75), Inches(5.2), Inches(0.6))
@@ -700,13 +815,13 @@ def slide_12_hazard_reporting(prs):
     add_text(rt, "REPORTING SYSTEMS", size=16, color=GOLD, bold=True)
     set_shape_name(rt, "repTitle")
     q = slide.shapes.add_textbox(Inches(7.1), Inches(2.55), Inches(5.3), Inches(0.4))
-    add_text(q, "And how will you report…?", size=13, color=RGBColor(0xA8, 0xB8, 0xC8))
+    add_text(q, "AND HOW WILL YOU REPORT..?", size=13, color=RGBColor(0xA8, 0xB8, 0xC8))
     set_shape_name(q, "repQ")
     reps = [
         "Keep it simple and accessible",
-        "Reactive & proactive can overlap",
-        "Always give reporters feedback",
-        "Simple file & track workflow",
+        "Re-active and pro-active processes can overlap",
+        "Ensure people submitting reports get feedback",
+        "Find a simple way to file and track reports",
     ]
     for i, r in enumerate(reps):
         rb = slide.shapes.add_textbox(Inches(7.1), Inches(3.2 + i * 0.7), Inches(5.3), Inches(0.55))
@@ -785,6 +900,10 @@ def slide_13_risk_matrix(prs):
         add_text(tb, name, size=12, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
         set_shape_name(tb, f"legendText{i}")
 
+    note = slide.shapes.add_textbox(Inches(0.7), Inches(6.15), Inches(12), Inches(0.7))
+    add_text(note, "Note — In determining the safety risk tolerability, the quality and reliability of the data used for the hazard identification and safety risk probability should be taken into consideration.", size=11, color=SLATE, align=PP_ALIGN.CENTER)
+    set_shape_name(note, "matrixNote")
+
     add_morph_transition(slide)
     return slide
 
@@ -797,25 +916,31 @@ def slide_14_risk_actions(prs):
     slide_title(slide, "Risk Response Levels")
 
     rows = [
-        (RED, "INTOLERABLE", "Immediate action or stop activity.\nPriority mitigation to tolerable level."),
-        (AMBER, "TOLERABLE", "Acceptable with mitigation.\nMay need management decision."),
-        (GREEN, "ACCEPTABLE", "Accept as-is.\nNo further mitigation required."),
+        (RED, "INTOLERABLE", "5A, 5B, 5C, 4A, 4B, 3A",
+         "Take immediate action to mitigate the risk or stop the activity. Perform priority safety risk mitigation to ensure additional or enhanced preventative controls are in place to bring the safety risk index down to tolerable."),
+        (AMBER, "TOLERABLE", "5D, 5E, 4C, 4D, 4E, 3B, 3C, 3D, 2A, 2B, 2C, 1A",
+         "Can be tolerated based on the safety risk mitigation. It may require management decision to accept the risk."),
+        (GREEN, "ACCEPTABLE", "3E, 2D, 2E, 1B, 1C, 1D, 1E",
+         "Acceptable as is. No further safety risk mitigation required."),
     ]
-    for i, (col, title, desc) in enumerate(rows):
-        y = Inches(1.8 + i * 1.6)
-        card = round_rect(slide, Inches(0.7), y, Inches(12), Inches(1.4), WHITE)
+    for i, (col, title, rng, desc) in enumerate(rows):
+        y = Inches(1.75 + i * 1.65)
+        card = round_rect(slide, Inches(0.7), y, Inches(12), Inches(1.5), WHITE)
         set_shape_name(card, f"actionCard{i}")
-        badge = round_rect(slide, Inches(0.95), y + Inches(0.3), Inches(3.2), Inches(0.8), col)
+        badge = round_rect(slide, Inches(0.95), y + Inches(0.2), Inches(3.2), Inches(0.7), col)
         set_shape_name(badge, f"actionBadge{i}")
-        bt = slide.shapes.add_textbox(Inches(0.95), y + Inches(0.48), Inches(3.2), Inches(0.45))
-        add_text(bt, title, size=16, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        bt = slide.shapes.add_textbox(Inches(0.95), y + Inches(0.35), Inches(3.2), Inches(0.45))
+        add_text(bt, title, size=15, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
         set_shape_name(bt, f"actionTitle{i}")
-        db = slide.shapes.add_textbox(Inches(4.5), y + Inches(0.35), Inches(7.8), Inches(0.8))
-        add_text(db, desc, size=15, color=NAVY)
+        rb = slide.shapes.add_textbox(Inches(0.95), y + Inches(0.95), Inches(3.2), Inches(0.5))
+        add_text(rb, rng, size=10, color=SLATE, align=PP_ALIGN.CENTER)
+        set_shape_name(rb, f"actionRange{i}")
+        db = slide.shapes.add_textbox(Inches(4.5), y + Inches(0.2), Inches(7.9), Inches(1.2))
+        add_text(db, desc, size=12.5, color=NAVY)
         set_shape_name(db, f"actionDesc{i}")
 
-    note = slide.shapes.add_textbox(Inches(0.7), Inches(6.6), Inches(12), Inches(0.4))
-    add_text(note, "Data quality for hazard ID & probability must inform every tolerability decision.", size=12, color=SLATE, align=PP_ALIGN.CENTER)
+    note = slide.shapes.add_textbox(Inches(0.7), Inches(6.75), Inches(12), Inches(0.4))
+    add_text(note, "Based on hazard identification analysis — likelihood of occurrence × severity of resulting consequences.", size=12, color=SLATE, align=PP_ALIGN.CENTER)
     set_shape_name(note, "actionNote")
 
     add_morph_transition(slide)
@@ -836,9 +961,9 @@ def slide_15_assurance(prs):
     # 2x2 strategy map
     cells = [
         (NAVY, "Organization Objective", "Reduce Costs"),
-        (TEAL, "Org Performance Measure", "Reduction in Insurance Rates"),
-        (GOLD, "Safety Objective", "Decrease Hangar Incidents\n& Severity"),
-        (BLUE, "Safety Performance Measure", "Fewer damage events · Near-misses\nLessons learned · CAP closure"),
+        (TEAL, "Organization Performance Measure", "Reduction in Insurance Rates"),
+        (GOLD, "Safety Objective", "Decrease Number and Severity\nof Hangar Incidents"),
+        (BLUE, "Safety Performance Measure", "Reduction in total number of events:\nDamage-only · Near-miss · Lessons Learned · Corrective Action Plans"),
     ]
     for i, (col, header, body) in enumerate(cells):
         x = Inches(0.6 + (i % 2) * 6.3)
@@ -850,8 +975,8 @@ def slide_15_assurance(prs):
         hb = slide.shapes.add_textbox(x + Inches(0.35), y + Inches(0.35), Inches(5.3), Inches(0.4))
         add_text(hb, header, size=13, color=col, bold=True)
         set_shape_name(hb, f"assHead{i}")
-        bb = slide.shapes.add_textbox(x + Inches(0.35), y + Inches(0.9), Inches(5.3), Inches(0.9))
-        add_text(bb, body, size=18, color=NAVY, bold=True)
+        bb = slide.shapes.add_textbox(x + Inches(0.35), y + Inches(0.85), Inches(5.3), Inches(1.1))
+        add_text(bb, body, size=15, color=NAVY, bold=True)
         set_shape_name(bb, f"assBody{i}")
 
     add_morph_transition(slide)
@@ -863,8 +988,12 @@ def slide_16_spi_chart(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     rect(slide, 0, 0, SLIDE_W, SLIDE_H, OFF_WHITE)
     accent_bar(slide)
-    section_label(slide, "Measurement")
-    slide_title(slide, "Safety Performance Indicators")
+    section_label(slide, "Monitoring & Measurement")
+    slide_title(slide, "Safety Performance Monitoring")
+
+    sub = slide.shapes.add_textbox(Inches(0.7), Inches(1.35), Inches(12), Inches(0.35))
+    add_text(sub, "Safety performance is proactively and reactively monitored so key safety goals continue to be achieved. Example SPI format:", size=13, color=SLATE)
+    set_shape_name(sub, "spiSub")
 
     chart_data = CategoryChartData()
     chart_data.categories = ["Damage-only\nEvents", "Near-miss\nAccidents", "Lessons\nLearned", "CAPs\nClosed"]
@@ -916,6 +1045,10 @@ def slide_17_moc(prs):
     section_label(slide, "Change Control")
     slide_title(slide, "Management of Change")
 
+    intro = slide.shapes.add_textbox(Inches(0.7), Inches(1.4), Inches(12), Inches(0.4))
+    add_text(intro, "The MOC process has four basic phases. Both the effect of change and the effect of implementing change are considered.", size=13, color=SLATE)
+    set_shape_name(intro, "mocIntro")
+
     phases = [
         (NAVY, "1", "Screening"),
         (TEAL, "2", "Review"),
@@ -924,44 +1057,42 @@ def slide_17_moc(prs):
     ]
     for i, (col, num, name) in enumerate(phases):
         x = Inches(0.7 + i * 3.15)
-        card = round_rect(slide, x, Inches(1.7), Inches(2.95), Inches(2.2), WHITE)
-        set_shape_name(card, f"mocPhase{i}")
-        circ = oval(slide, x + Inches(0.95), Inches(1.95), Inches(1.05), Inches(1.05), col)
+        circ = oval(slide, x + Inches(0.95), Inches(1.95), Inches(0.95), Inches(0.95), col)
         set_shape_name(circ, f"mocCirc{i}")
-        nb = slide.shapes.add_textbox(x + Inches(0.95), Inches(2.2), Inches(1.05), Inches(0.55))
-        add_text(nb, num, size=22, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
+        nb = slide.shapes.add_textbox(x + Inches(0.95), Inches(2.17), Inches(0.95), Inches(0.5))
+        add_text(nb, num, size=20, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
         set_shape_name(nb, f"mocNum{i}")
-        tb = slide.shapes.add_textbox(x + Inches(0.15), Inches(3.2), Inches(2.65), Inches(0.45))
-        add_text(tb, name, size=15, color=NAVY, bold=True, align=PP_ALIGN.CENTER)
+        tb = slide.shapes.add_textbox(x + Inches(0.15), Inches(2.95), Inches(2.65), Inches(0.4))
+        add_text(tb, name, size=14, color=NAVY, bold=True, align=PP_ALIGN.CENTER)
         set_shape_name(tb, f"mocName{i}")
         if i < 3:
             arr = slide.shapes.add_shape(
                 MSO_SHAPE.RIGHT_ARROW,
-                x + Inches(2.7), Inches(2.5),
+                x + Inches(2.55), Inches(2.3),
                 Inches(0.35), Inches(0.25),
             )
             fill_shape(arr, SOFT_GRAY)
             set_shape_name(arr, f"mocArrow{i}")
 
-    # Key procedures (condensed)
+    # Procedures for managing change (verbatim)
     procs = [
         "Risk assessment",
-        "Goal identification",
-        "Operational procedures",
-        "Impact analysis",
-        "Documentation update",
-        "Communication",
-        "Approval authority",
-        "Safety review",
-        "Final approval",
+        "Identifying the goals, objectives and nature of the proposed change",
+        "Identifying operational procedures",
+        "Analyzing changes in location, equipment or operating conditions",
+        "Posting current changes in maintenance and operator manuals",
+        "All personnel being made aware of and understanding changes",
+        "Identifying the level of management with authority to approve changes",
+        "Reviewing, evaluating and recording potential safety hazards from the change or its implementation",
+        "Approval of the agreed change and the implementation procedure(s)",
     ]
     for i, p in enumerate(procs):
-        x = Inches(0.7 + (i % 3) * 4.15)
-        y = Inches(4.3 + (i // 3) * 0.85)
-        chip = round_rect(slide, x, y, Inches(3.95), Inches(0.7), WHITE)
+        x = Inches(0.7 + (i % 2) * 6.15)
+        y = Inches(3.55 + (i // 2) * 0.72)
+        chip = round_rect(slide, x, y, Inches(5.95), Inches(0.62), WHITE)
         set_shape_name(chip, f"mocProc{i}")
-        tb = slide.shapes.add_textbox(x + Inches(0.2), y + Inches(0.18), Inches(3.55), Inches(0.4))
-        add_text(tb, f"{i+1:02d}   {p}", size=13, color=NAVY, bold=True)
+        tb = slide.shapes.add_textbox(x + Inches(0.2), y + Inches(0.07), Inches(5.6), Inches(0.5))
+        add_text(tb, f"{i+1:02d}   {p}", size=10.5, color=NAVY, bold=True)
         set_shape_name(tb, f"mocProcText{i}")
 
     add_morph_transition(slide)
@@ -996,8 +1127,8 @@ def slide_18_improvement(prs):
     add_text(ct, "SMS\nIMPROVE", size=14, color=GOLD, bold=True, align=PP_ALIGN.CENTER)
     set_shape_name(ct, "cycleCenterText")
 
-    note = slide.shapes.add_textbox(Inches(0.7), Inches(6.6), Inches(12), Inches(0.4))
-    add_text(note, "Recurring SRM + SA  ·  Capture lessons  ·  Share with every employee", size=13, color=SLATE, align=PP_ALIGN.CENTER)
+    note = slide.shapes.add_textbox(Inches(0.7), Inches(6.55), Inches(12), Inches(0.6))
+    add_text(note, "Continual improvement through recurring application of Safety Risk Management, Safety Assurance — using safety lessons learned and communicating them to all personnel.", size=12, color=SLATE, align=PP_ALIGN.CENTER)
     set_shape_name(note, "improveNote")
 
     add_morph_transition(slide)
@@ -1012,10 +1143,10 @@ def slide_19_promotion(prs):
     slide_title(slide, "Safety Promotion & Culture")
 
     pillars = [
-        (NAVY, "TRAINING", "Minimum safety training for all employees"),
-        (TEAL, "SMS EDUCATION", "Introductory + recurrent SMS training"),
-        (GOLD, "SAFETY CULTURE", "Shared values that make safe choices normal"),
-        (ORANGE, "PROMOTION", "Visible leadership · open reporting · recognition"),
+        (NAVY, "TRAINING & EDUCATION", "Minimum safety training to all the employees"),
+        (TEAL, "SMS TRAINING", "All personnel should be given introductory and recurrent SMS training"),
+        (GOLD, "SAFETY CULTURE", "Shared values that make safe choices the normal way of working"),
+        (ORANGE, "PROMOTION", "Visible leadership, open reporting and recognition"),
     ]
     for i, (col, title, desc) in enumerate(pillars):
         x = Inches(0.55 + i * 3.2)
@@ -1143,28 +1274,34 @@ def main():
     prs.slide_width = SLIDE_W
     prs.slide_height = SLIDE_H
 
-    slide_01_title(prs)
-    slide_02_agenda(prs)
-    slide_03_policy(prs)
-    slide_04_objective_intro(prs)
-    slide_05_pyramid(prs)
-    slide_06_commitment(prs)
-    slide_07_swiss_cheese(prs)
-    slide_08_key_personnel(prs)
-    slide_09_erp(prs)
-    slide_10_documentation(prs)
-    slide_11_risk_strategies(prs)
-    slide_12_hazard_reporting(prs)
-    slide_13_risk_matrix(prs)
-    slide_14_risk_actions(prs)
-    slide_15_assurance(prs)
-    slide_16_spi_chart(prs)
-    slide_17_moc(prs)
-    slide_18_improvement(prs)
-    slide_19_promotion(prs)
-    slide_20_training_chart(prs)
-    slide_21_summary(prs)
-    slide_22_close(prs)
+    builders = [
+        slide_01_title,
+        slide_02_agenda,
+        slide_03_policy,
+        slide_04_objective_intro,
+        slide_05_pyramid,
+        slide_06_commitment,
+        slide_07_swiss_cheese,
+        slide_08_key_personnel,
+        slide_09_erp,
+        slide_10_documentation,
+        slide_11_risk_strategies,
+        slide_12_hazard_reporting,
+        slide_13_risk_matrix,
+        slide_14_risk_actions,
+        slide_15_assurance,
+        slide_16_spi_chart,
+        slide_17_moc,
+        slide_18_improvement,
+        slide_19_promotion,
+        slide_20_training_chart,
+        slide_21_summary,
+        slide_22_close,
+    ]
+    for build in builders:
+        slide = build(prs)
+        # Staggered fade-in build for everything except the background fill.
+        add_entrance_animations(slide, skip=1)
 
     out = "/workspace/SMS_Management_Briefing.pptx"
     prs.save(out)
