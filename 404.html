@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Page Not Found</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --ink: #3f4654;
+    --ink-soft: #6b7280;
+    --grid: rgba(156, 163, 175, 0.45);
+    --line: #d1d5db;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "DM Sans", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Isometric diamond grid */
+  .grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(30deg, transparent 49.4%, var(--grid) 49.4%, var(--grid) 50.6%, transparent 50.6%),
+      linear-gradient(150deg, transparent 49.4%, var(--grid) 49.4%, var(--grid) 50.6%, transparent 50.6%);
+    background-size: 64px 110px;
+    background-position: 0 0, 32px 0;
+    opacity: 0.55;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding: clamp(2rem, 7vh, 5rem) clamp(1.5rem, 7vw, 7rem);
+  }
+
+  .visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: enter 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .iso-404 {
+    width: min(100%, 640px);
+    height: auto;
+    filter: drop-shadow(18px 28px 0 rgba(156, 163, 175, 0.12));
+  }
+
+  .copy {
+    max-width: 26rem;
+    animation: enter 850ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+  }
+
+  .copy h1 {
+    font-family: "Outfit", sans-serif;
+    font-size: clamp(1.5rem, 2.35vw, 2rem);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.7rem;
+  }
+
+  .copy p {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 1.7rem;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.85rem;
+    padding: 0 1.4rem;
+    border-radius: 0.55rem;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--ink);
+    font: 500 0.95rem/1 "DM Sans", sans-serif;
+    text-decoration: none;
+    transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .cta:hover {
+    border-color: #9ca3af;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(63, 70, 84, 0.08);
+  }
+
+  .cta:active { transform: translateY(0); }
+
+  .edge-glow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .page {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      padding-block: 3.25rem;
+    }
+    .iso-404 { width: min(100%, 420px); }
+    .copy { width: 100%; max-width: 420px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .visual, .copy, .edge-glow { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="grid" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="visual" aria-hidden="true">
+      <!-- Isometric extruded 404 -->
+      <svg class="iso-404" viewBox="0 0 780 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#f6f7f9"/>
+          </linearGradient>
+          <linearGradient id="right" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#eceff3"/>
+            <stop offset="100%" stop-color="#d7dce3"/>
+          </linearGradient>
+          <linearGradient id="top" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stop-color="#fafbfc"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+          </linearGradient>
+          <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ff9a5c"/>
+            <stop offset="50%" stop-color="#ff6a33"/>
+            <stop offset="100%" stop-color="#e24724"/>
+          </linearGradient>
+          <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge>
+              <feMergeNode in="b"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Helper: isometric extrusion depth -->
+        <!-- Left 4 -->
+        <g transform="translate(30,40)">
+          <!-- right extrusion -->
+          <path d="M188 48 L214 33 L214 268 L188 283 Z" fill="url(#right)" stroke="#c5ccd6" stroke-width="1.4"/>
+          <path d="M140 123 L166 108 L166 138 L140 153 Z" fill="url(#right)" stroke="#c5ccd6" stroke-width="1.2"/>
+          <!-- top extrusion -->
+          <path d="M72 48 L98 33 L214 33 L188 48 Z" fill="url(#top)" stroke="#d0d6de" stroke-width="1.2"/>
+          <path d="M72 153 L98 138 L166 138 L140 153 Z" fill="url(#top)" stroke="#d0d6de" stroke-width="1.2"/>
+          <!-- front face -->
+          <path d="M72 48 H140 V123 H188 V48 H188 V283 H140 V153 H72 Z" fill="url(#face)" stroke="#c5ccd6" stroke-width="2"/>
+          <!-- orange rim glow -->
+          <path class="edge-glow" d="M80 56 H132 M148 56 H180" stroke="url(#glow)" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+          <path class="edge-glow" d="M140 56 V115" stroke="url(#glow)" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+        </g>
+
+        <!-- Center 0 -->
+        <g transform="translate(250,20)">
+          <!-- right extrusion -->
+          <path d="M210 70 C230 55 248 68 248 95 V265 C248 300 215 318 180 325 L210 300 Z" fill="url(#right)" stroke="#c5ccd6" stroke-width="1.4"/>
+          <!-- top extrusion -->
+          <path d="M70 70 C95 40 145 28 160 28 C190 28 230 45 210 70 L236 52 C210 22 165 10 160 10 C130 10 80 25 44 52 Z" fill="url(#top)" stroke="#d0d6de" stroke-width="1.2"/>
+          <!-- front outer -->
+          <path d="M70 70 C70 35 115 20 160 20 C205 20 250 35 250 70 V290 C250 325 205 340 160 340 C115 340 70 325 70 290 Z" fill="url(#face)" stroke="#c5ccd6" stroke-width="2"/>
+          <!-- hole -->
+          <path d="M120 95 C120 80 138 72 160 72 C182 72 200 80 200 95 V265 C200 280 182 288 160 288 C138 288 120 280 120 265 Z" fill="#f4f5f7" stroke="#c5ccd6" stroke-width="1.8"/>
+          <!-- hole right shade to keep depth -->
+          <path d="M200 95 C212 88 220 98 220 112 V248 C220 270 200 280 180 284 L200 265 Z" fill="#e8ebf0" opacity="0.7"/>
+          <!-- glow on top rim -->
+          <path class="edge-glow" d="M95 55 C120 32 200 32 225 55" stroke="url(#glow)" stroke-width="5" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+          <path class="edge-glow" d="M130 88 C145 72 175 72 190 88" stroke="url(#glow)" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+        </g>
+
+        <!-- Right 4 -->
+        <g transform="translate(520,40)">
+          <path d="M188 48 L214 33 L214 268 L188 283 Z" fill="url(#right)" stroke="#c5ccd6" stroke-width="1.4"/>
+          <path d="M140 123 L166 108 L166 138 L140 153 Z" fill="url(#right)" stroke="#c5ccd6" stroke-width="1.2"/>
+          <path d="M72 48 L98 33 L214 33 L188 48 Z" fill="url(#top)" stroke="#d0d6de" stroke-width="1.2"/>
+          <path d="M72 153 L98 138 L166 138 L140 153 Z" fill="url(#top)" stroke="#d0d6de" stroke-width="1.2"/>
+          <path d="M72 48 H140 V123 H188 V48 H188 V283 H140 V153 H72 Z" fill="url(#face)" stroke="#c5ccd6" stroke-width="2"/>
+          <path class="edge-glow" d="M80 56 H132 M148 56 H180" stroke="url(#glow)" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+          <path class="edge-glow" d="M140 56 V115" stroke="url(#glow)" stroke-width="3.5" stroke-linecap="round" fill="none" filter="url(#softGlow)"/>
+        </g>
+      </svg>
+    </section>
+
+    <section class="copy">
+      <h1>The page you’re looking for has wandered off, but don’t worry!</h1>
+      <p>Let’s get you back on track.</p>
+      <a class="cta" href="/">Take me home</a>
+    </section>
+  </main>
+</body>
+</html>
