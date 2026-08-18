@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <linearGradient id="ringA" x1="10%" y1="90%" x2="90%" y2="10%">
+      <stop offset="0%" stop-color="#0B1FA8"/>
+      <stop offset="30%" stop-color="#7B2FBE"/>
+      <stop offset="65%" stop-color="#C724B1"/>
+      <stop offset="100%" stop-color="#FF1E8C"/>
+    </linearGradient>
+    <linearGradient id="ringB" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C5F0"/>
+      <stop offset="100%" stop-color="#3A5CE8"/>
+    </linearGradient>
+    <linearGradient id="triGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C5F0"/>
+      <stop offset="55%" stop-color="#7B2FBE"/>
+      <stop offset="100%" stop-color="#E91E8C"/>
+    </linearGradient>
+    <linearGradient id="flapGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2A0A57"/>
+      <stop offset="100%" stop-color="#9B2FD6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- back twist flap for depth -->
+  <path d="M48,166 C64,198 110,214 142,200 C112,201 76,186 62,158 Z" fill="url(#flapGrad)" opacity="0.95"/>
+
+  <!-- outer ring (magenta/purple) -->
+  <circle cx="120" cy="124" r="93" fill="none" stroke="url(#ringA)" stroke-width="32" stroke-linecap="round"
+    stroke-dasharray="440 585" transform="rotate(-104 120 124)"/>
+
+  <!-- inner ring (blue/cyan) -->
+  <circle cx="120" cy="124" r="59" fill="none" stroke="url(#ringB)" stroke-width="22" stroke-linecap="round"
+    stroke-dasharray="248 371" transform="rotate(-96 120 124)"/>
+
+  <!-- play triangle -->
+  <path d="M99,83 L173,124 L99,161 C91,165 82,160 82,151 L82,92 C82,83 91,79 99,83 Z"
+    fill="#FCFDFF" stroke="url(#triGrad)" stroke-width="3.5" stroke-linejoin="round"/>
+
+  <!-- sparkles -->
+  <path d="M156,8 L159,17.5 L168.5,20.5 L159,23.5 L156,33 L153,23.5 L143.5,20.5 L153,17.5 Z" fill="#FF3FA4"/>
+  <path d="M190,32 L192,38 L198,40 L192,42 L190,48 L188,42 L182,40 L188,38 Z" fill="#22C5F0"/>
+  <path d="M205,64 L206.3,68 L210.3,69.3 L206.3,70.6 L205,74.6 L203.7,70.6 L199.7,69.3 L203.7,68 Z" fill="#C96BE8"/>
+</svg>
