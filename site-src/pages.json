@@ -1,0 +1,179 @@
+{
+  "home": {
+    "url": "index.html",
+    "nav_page": "home",
+    "title": "Digital Marketing Agency in Bangalore & Mysore | SYN Media Technology",
+    "description": "SYN Media Technology is a next-gen digital marketing agency in Bangalore & Mysore offering SEO, website development, Google Ads, Meta Ads, social media marketing, branding and AI automation. 250+ brands scaled, 4.8x average ROAS.",
+    "keywords": "digital marketing agency Bangalore, digital marketing agency Mysore, SEO company Bangalore, best digital marketing company Karnataka, performance marketing agency Bangalore, social media agency Mysore, website development company Bangalore",
+    "og_description": "Next-gen digital marketing agency in Bangalore & Mysore — SEO, web design, Google & Meta Ads, social media, branding and AI automation. 250+ brands scaled, 4.8x average ROAS."
+  },
+  "about": {
+    "url": "about.html",
+    "title": "About Us | Digital Marketing Agency Bangalore & Mysore | SYN Media Technology",
+    "description": "Founded in 2013 in Bangalore, SYN Media Technology has grown into a 40+ person digital marketing agency with offices in Bangalore and Mysore, scaling 250+ brands with a 4.8x average ROAS.",
+    "keywords": "about SYN Media Technology, digital marketing agency history Bangalore, marketing agency Mysore team, best marketing agency Karnataka, digital marketing company profile",
+    "og_description": "The story, team and values behind Bangalore & Mysore's fastest-growing digital marketing agency."
+  },
+  "services": {
+    "url": "services.html",
+    "title": "Digital Marketing Services in Bangalore & Mysore | SYN Media Technology",
+    "description": "Explore SYN Media Technology's full digital marketing service stack for Bangalore & Mysore businesses: SEO, website development, Google Ads, Meta Ads, social media, branding and AI automation.",
+    "keywords": "digital marketing services Bangalore, digital marketing services Mysore, SEO services, web development services, performance marketing services, social media marketing services, branding services Karnataka",
+    "og_description": "The complete digital growth stack — SEO, web development, performance marketing, social, branding and AI automation for Bangalore & Mysore businesses."
+  },
+  "web-development": {
+    "url": "web-development.html",
+    "nav_page": "services",
+    "title": "Website Development Company in Bangalore & Mysore | SYN Media Technology",
+    "description": "Business, e-commerce, healthcare and education websites built for speed, conversion and SEO. SYN Media Technology is a leading website development company serving Bangalore & Mysore.",
+    "keywords": "website development company Bangalore, website design company Mysore, ecommerce website development Bangalore, business website design Karnataka, WordPress developer Bangalore, Shopify developer Mysore",
+    "og_description": "High-performance, SEO-ready websites built for Bangalore & Mysore businesses — from business sites to full ecommerce builds."
+  },
+  "seo-services": {
+    "url": "seo-services.html",
+    "nav_page": "services",
+    "title": "SEO Services in Bangalore & Mysore | SYN Media Technology",
+    "description": "Technical SEO, on-page optimization, local SEO and link building that gets Bangalore & Mysore businesses to page 1 of Google. 247% average organic traffic growth.",
+    "keywords": "SEO services Bangalore, SEO company Mysore, local SEO Bangalore, local SEO Mysore, technical SEO agency Karnataka, SEO consultant Bangalore, Google ranking agency Mysore",
+    "og_description": "Data-driven SEO strategies delivering sustainable organic growth for Bangalore & Mysore businesses — 247% average traffic increase."
+  },
+  "social-media-marketing": {
+    "url": "social-media-marketing.html",
+    "nav_page": "services",
+    "title": "Social Media Marketing Agency in Bangalore & Mysore | SYN Media Technology",
+    "description": "Strategy, content and paid social across Instagram, Facebook, LinkedIn and YouTube. SYN Media Technology is a social media marketing agency for Bangalore & Mysore brands.",
+    "keywords": "social media marketing agency Bangalore, social media agency Mysore, Instagram marketing Bangalore, content marketing Karnataka, influencer marketing agency Bangalore",
+    "og_description": "Strategic social media management that builds communities and converts followers into customers, for Bangalore & Mysore brands."
+  },
+  "performance-marketing": {
+    "url": "performance-marketing.html",
+    "nav_page": "services",
+    "title": "Performance Marketing Agency (Google & Meta Ads) Bangalore & Mysore | SYN Media Technology",
+    "description": "Google Ads and Meta Ads management delivering an average 4.8x ROAS for Bangalore & Mysore businesses. Full-funnel performance marketing, run by a dedicated Karnataka team.",
+    "keywords": "performance marketing agency Bangalore, Google Ads agency Bangalore, Meta Ads agency Mysore, PPC agency Karnataka, Facebook ads management Bangalore, Google Ads management Mysore",
+    "og_description": "Google Ads & Meta Ads campaigns engineered for measurable ROAS — run by a dedicated Bangalore & Mysore performance team."
+  },
+  "branding-design": {
+    "url": "branding-design.html",
+    "nav_page": "services",
+    "title": "Branding & Design Agency in Bangalore & Mysore | SYN Media Technology",
+    "description": "Brand strategy, visual identity and logo design for Bangalore & Mysore businesses. SYN Media Technology builds brands that stand out and convert.",
+    "keywords": "branding agency Bangalore, logo design Mysore, brand identity design Karnataka, graphic design agency Bangalore, brand strategy consultant Mysore",
+    "og_description": "Brand strategy, visual identity and design systems built for market differentiation — for Bangalore & Mysore businesses."
+  },
+  "ai-automation": {
+    "url": "ai-automation.html",
+    "nav_page": "services",
+    "title": "AI Marketing Automation Agency Bangalore & Mysore | SYN Media Technology",
+    "description": "Marketing automation, AI chatbots and workflow automation that scale Bangalore & Mysore businesses efficiently. SYN Media Technology's AI automation service.",
+    "keywords": "AI marketing agency Bangalore, marketing automation Mysore, AI chatbot development Karnataka, workflow automation agency Bangalore, AI content tools agency",
+    "og_description": "AI-powered marketing automation, chatbots and workflow tools that scale operations for Bangalore & Mysore businesses."
+  },
+  "locations": {
+    "url": "locations.html",
+    "title": "Digital Marketing Agency Locations: Bangalore & Mysore | SYN Media Technology",
+    "description": "SYN Media Technology operates from two Karnataka offices — Bangalore (Indiranagar) and Mysore (Vijayanagar) — serving local businesses with hyperlocal SEO and marketing.",
+    "keywords": "digital marketing agency near me Bangalore, digital marketing agency near me Mysore, marketing agency Indiranagar, marketing agency Vijayanagar Mysore, Karnataka digital marketing offices",
+    "og_description": "Two Karnataka offices, one team — explore SYN Media Technology's Bangalore and Mysore locations."
+  },
+  "digital-marketing-bangalore": {
+    "url": "digital-marketing-bangalore.html",
+    "nav_page": "locations",
+    "title": "Digital Marketing Agency in Bangalore | SEO, Ads & Web Design | SYN Media Technology",
+    "description": "SYN Media Technology is a Bangalore-based digital marketing agency in Indiranagar serving Koramangala, HSR Layout, Whitefield, Jayanagar & Electronic City with SEO, ads and web design.",
+    "keywords": "digital marketing agency Bangalore, SEO company Bangalore, digital marketing agency Indiranagar, digital marketing agency Koramangala, digital marketing agency Whitefield, digital marketing agency HSR Layout, best digital marketing agency in Bangalore",
+    "og_description": "Bangalore's data-driven digital marketing agency — SEO, Google & Meta Ads, web design and social media, headquartered in Indiranagar.",
+    "extra_ld": "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.synmediatechnology.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Locations\",\"item\":\"https://www.synmediatechnology.com/locations.html\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Bangalore\",\"item\":\"https://www.synmediatechnology.com/digital-marketing-bangalore.html\"}]}</script>"
+  },
+  "digital-marketing-mysore": {
+    "url": "digital-marketing-mysore.html",
+    "nav_page": "locations",
+    "title": "Digital Marketing Agency in Mysore | SEO, Ads & Web Design | SYN Media Technology",
+    "description": "SYN Media Technology is a Mysore-based digital marketing agency in Vijayanagar serving Kuvempunagar, Saraswathipuram, Gokulam & Hebbal with SEO, ads and web design.",
+    "keywords": "digital marketing agency Mysore, SEO company Mysore, digital marketing agency Vijayanagar Mysore, digital marketing agency Kuvempunagar, digital marketing agency Gokulam, best digital marketing agency in Mysore, SEO company Mysuru",
+    "og_description": "Mysore's local digital marketing studio — SEO, Google & Meta Ads, web design and social media, based in Vijayanagar.",
+    "extra_ld": "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.synmediatechnology.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Locations\",\"item\":\"https://www.synmediatechnology.com/locations.html\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Mysore\",\"item\":\"https://www.synmediatechnology.com/digital-marketing-mysore.html\"}]}</script>"
+  },
+  "portfolio": {
+    "url": "portfolio.html",
+    "title": "Our Work — Bangalore & Mysore Client Portfolio | SYN Media Technology",
+    "description": "250+ projects across Bangalore, Mysore and beyond — website development, SEO, performance marketing and social media results from SYN Media Technology.",
+    "keywords": "digital marketing agency portfolio Bangalore, marketing case studies Mysore, SEO results Bangalore, ad campaign results Karnataka, website portfolio Bangalore agency",
+    "og_description": "250+ projects, real results — explore SYN Media Technology's work across Bangalore and Mysore."
+  },
+  "case-studies": {
+    "url": "case-studies.html",
+    "nav_page": "portfolio",
+    "title": "Case Studies | Bangalore & Mysore Marketing Results | SYN Media Technology",
+    "description": "Deep-dive case studies showing how SYN Media Technology solves real marketing challenges for Bangalore and Mysore businesses — problem, strategy and measurable results.",
+    "keywords": "digital marketing case study Bangalore, SEO case study Mysore, Meta ads case study Karnataka, marketing agency results Bangalore, ROAS case study India",
+    "og_description": "Problem, strategy, results — detailed case studies from Bangalore and Mysore campaigns."
+  },
+  "pricing": {
+    "url": "pricing.html",
+    "title": "Digital Marketing Pricing & Packages Bangalore & Mysore | SYN Media Technology",
+    "description": "Transparent, month-to-month digital marketing pricing for Bangalore & Mysore businesses. Plans from ₹25,000/month for SEO or social, up to full-funnel enterprise packages.",
+    "keywords": "digital marketing pricing Bangalore, SEO packages Mysore, social media marketing cost Bangalore, digital marketing agency cost Karnataka, affordable digital marketing Mysore",
+    "og_description": "Simple, transparent digital marketing pricing — no lock-in contracts, plans for every stage of growth."
+  },
+  "blog": {
+    "url": "blog.html",
+    "title": "Digital Marketing Blog — Bangalore & Mysore Insights | SYN Media Technology",
+    "description": "SEO checklists, ad strategy breakdowns and marketing trend analysis for Bangalore & Mysore businesses, from the SYN Media Technology team.",
+    "keywords": "digital marketing blog Bangalore, SEO blog Mysore, marketing insights Karnataka, local SEO tips Bangalore, social media tips Mysore",
+    "og_description": "SEO, ads and growth marketing insights for Bangalore & Mysore businesses."
+  },
+  "blog-local-seo-mysore": {
+    "url": "blog-local-seo-checklist-mysore.html",
+    "nav_page": "blog",
+    "title": "Local SEO Checklist for Mysore Businesses in 2026 | SYN Media Technology",
+    "description": "The exact Google Business Profile, citation and content steps SYN Media Technology uses to rank Mysore businesses #1 in local search.",
+    "keywords": "local SEO Mysore, Google Business Profile Mysore, SEO checklist Mysore business, rank #1 Google Mysore, local SEO tips Karnataka",
+    "og_description": "A practical, step-by-step local SEO checklist for Mysore business owners.",
+    "extra_ld": "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Local SEO Checklist for Mysore Businesses in 2026\",\"author\":{\"@type\":\"Person\",\"name\":\"Meera Desai\"},\"publisher\":{\"@id\":\"https://www.synmediatechnology.com/#organization\"},\"datePublished\":\"2026-01-14\",\"image\":\"https://www.synmediatechnology.com/assets/og-image.png\",\"mainEntityOfPage\":\"https://www.synmediatechnology.com/blog-local-seo-checklist-mysore.html\"}</script>"
+  },
+  "blog-bangalore-marketing-trends": {
+    "url": "blog-bangalore-digital-marketing-trends-2026.html",
+    "nav_page": "blog",
+    "title": "Bangalore Digital Marketing Trends for 2026 | SYN Media Technology",
+    "description": "The five digital marketing shifts SYN Media Technology is tracking for Bangalore brands in 2026 — from AI search to zero-click SEO and community-led growth.",
+    "keywords": "digital marketing trends Bangalore 2026, SEO trends Bangalore, AI search marketing Bangalore, marketing trends Karnataka, Bangalore startup marketing",
+    "og_description": "Five digital marketing shifts every Bangalore brand should plan for in 2026.",
+    "extra_ld": "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Bangalore Digital Marketing Trends for 2026\",\"author\":{\"@type\":\"Person\",\"name\":\"Rohan Shetty\"},\"publisher\":{\"@id\":\"https://www.synmediatechnology.com/#organization\"},\"datePublished\":\"2026-02-02\",\"image\":\"https://www.synmediatechnology.com/assets/og-image.png\",\"mainEntityOfPage\":\"https://www.synmediatechnology.com/blog-bangalore-digital-marketing-trends-2026.html\"}</script>"
+  },
+  "testimonials": {
+    "url": "testimonials.html",
+    "title": "Client Testimonials & Reviews | SYN Media Technology Bangalore & Mysore",
+    "description": "Read what Bangalore and Mysore business owners say about working with SYN Media Technology — 4.9/5 average rating across 186 reviews.",
+    "keywords": "digital marketing agency reviews Bangalore, SEO agency reviews Mysore, marketing agency testimonials Karnataka, best rated digital marketing agency Bangalore",
+    "og_description": "4.9/5 average rating across 186 reviews — hear from Bangalore & Mysore clients."
+  },
+  "faq": {
+    "url": "faq.html",
+    "title": "FAQs — Digital Marketing in Bangalore & Mysore | SYN Media Technology",
+    "description": "Answers to common questions about digital marketing pricing, timelines, local SEO and services in Bangalore and Mysore.",
+    "keywords": "digital marketing FAQ Bangalore, SEO questions Mysore, digital marketing cost questions, local SEO FAQ Karnataka",
+    "og_description": "Common questions about working with a Bangalore & Mysore digital marketing agency, answered."
+  },
+  "contact": {
+    "url": "contact.html",
+    "title": "Contact Us — Bangalore & Mysore Offices | SYN Media Technology",
+    "description": "Get in touch with SYN Media Technology's Bangalore (Indiranagar) or Mysore (Vijayanagar) office. Free consultation for all new projects.",
+    "keywords": "contact digital marketing agency Bangalore, contact SEO agency Mysore, digital marketing agency phone number Bangalore, marketing agency address Indiranagar",
+    "og_description": "Free consultation for all new projects — reach our Bangalore or Mysore office today."
+  },
+  "privacy-policy": {
+    "url": "privacy-policy.html",
+    "title": "Privacy Policy | SYN Media Technology",
+    "description": "How SYN Media Technology collects, uses and protects your data across our website and marketing services.",
+    "keywords": "SYN Media Technology privacy policy",
+    "og_description": "SYN Media Technology's privacy policy."
+  },
+  "terms-of-service": {
+    "url": "terms-of-service.html",
+    "title": "Terms of Service | SYN Media Technology",
+    "description": "The terms governing use of the SYN Media Technology website and engagement of our digital marketing services.",
+    "keywords": "SYN Media Technology terms of service",
+    "og_description": "SYN Media Technology's terms of service."
+  }
+}
